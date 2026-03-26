@@ -27,6 +27,37 @@ app.use(express.urlencoded({ extended: true }));
 /* ── Static uploads folder ── */
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+/* ── Cached Mongoose connection (critical for serverless) ── */
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return; // Reuse existing connection
+
+  if (mongoose.connection.readyState >= 1) {
+    isConnected = true;
+    return;
+  }
+
+  await mongoose.connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
+  });
+
+  isConnected = true;
+  console.log("✅  MongoDB connected");
+}
+
+/* ── DB middleware — ensures connection before every request ── */
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("❌  MongoDB connection error:", err.message);
+    res.status(503).json({ error: "Database unavailable. Please try again." });
+  }
+});
+
 /* ── Routes ── */
 app.use("/api/auth",       authRoutes);
 app.use("/api/profile",    profileRoutes);
@@ -40,16 +71,10 @@ app.use("/api/upload",     uploadRoutes);
 /* ── Health check ── */
 app.get("/api/health", (_, res) => res.json({ status: "ok", time: new Date() }));
 
-/* ── Connect DB (outside listen) ── */
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅  MongoDB connected"))
-  .catch((err) => console.error("❌  MongoDB connection error:", err.message));
-  // ← removed process.exit(1) — never kill a serverless function
-
-/* ── Only listen locally, not on Vercel ── */
+/* ── Only listen locally ── */
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`🚀  Server running on http://localhost:${PORT}`));
 }
 
-module.exports = app; 
+module.exports = app;

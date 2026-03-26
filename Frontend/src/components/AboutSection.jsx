@@ -28,7 +28,7 @@ export default function AboutSection() {
 
   const glance = [
     { n: profile?.stats?.totalProjects || "10+", l: "Projects"     },
-    { n: "2+",                                    l: "Yrs Coding"   },
+    { n: "3+",                                    l: "Yrs Coding"   },
     { n: profile?.stats?.skillsListed  || "8+",  l: "Technologies" },
   ];
 

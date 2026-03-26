@@ -41,11 +41,11 @@ export default function ContactSection() {
   };
 
   const contactItems = [
-    { href: "mailto:aayushkattel@email.com", Icon: FaEnvelope,    label: "Email",    value: "aayushkattel@email.com",       iconBg: "rgba(91,168,152,0.12)",  iconColor: "#5ba898" },
-    { href: "#",                              Icon: FaLocationDot, label: "Location", value: "Kathmandu, Nepal",             iconBg: "rgba(212,147,90,0.12)",  iconColor: "#d4935a" },
-    { href: "https://github.com",             Icon: FaGithub,     label: "GitHub",   value: "github.com/aayushkattel",      iconBg: "rgba(138,122,184,0.12)", iconColor: "#8a7ab8" },
-    { href: "https://linkedin.com",           Icon: FaLinkedin,   label: "LinkedIn", value: "linkedin.com/in/aayushkattel", iconBg: "rgba(100,148,192,0.12)", iconColor: "#0077b5" },
-    { href: "https://facebook.com",           Icon: FaFacebook,   label: "Facebook", value: "facebook.com/aayushkattel",    iconBg: "rgba(24,119,242,0.12)",  iconColor: "#1877f2" },
+    { href: "mailto:themailofaayushkattel@email.com", Icon: FaEnvelope,    label: "Email",    value: "aayushkattel@email.com",       iconBg: "rgba(91,168,152,0.12)",  iconColor: "#5ba898" },
+    { href: "https://maps.app.goo.gl/awUAeNe4wJzbRkao7",                              Icon: FaLocationDot, label: "Location", value: "Kathmandu, Nepal",             iconBg: "rgba(212,147,90,0.12)",  iconColor: "#d4935a" },
+    { href: "https://github.com/aayush-kattel",             Icon: FaGithub,     label: "GitHub",   value: "github.com/aayushkattel",      iconBg: "rgba(138,122,184,0.12)", iconColor: "#8a7ab8" },
+    { href: "https://www.linkedin.com/in/aayush-kattel-45a50733a/",           Icon: FaLinkedin,   label: "LinkedIn", value: "linkedin.com/in/aayushkattel", iconBg: "rgba(100,148,192,0.12)", iconColor: "#0077b5" },
+    { href: "https://www.facebook.com/aayush.kattel.900",           Icon: FaFacebook,   label: "Facebook", value: "facebook.com/aayushkattel",    iconBg: "rgba(24,119,242,0.12)",  iconColor: "#1877f2" },
   ];
 
   return (
@@ -170,8 +170,8 @@ export default function ContactSection() {
                     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                       <div className="contact-name-email">
                         {[
-                          { id: "name",  label: "Your Name",  type: "text",  placeholder: "John Doe"        },
-                          { id: "email", label: "Your Email", type: "email", placeholder: "john@email.com"  },
+                          { id: "name",  label: "Your Name",  type: "text",  placeholder: "Aayush Kattel"        },
+                          { id: "email", label: "Your Email", type: "email", placeholder: "aayush@email.com"  },
                         ].map(({ id, label, type, placeholder }) => (
                           <div key={id} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                             <label style={{ fontSize: "11px", fontFamily: "monospace", letterSpacing: "1.5px", textTransform: "uppercase", color: "#5ba898" }}>{label}</label>

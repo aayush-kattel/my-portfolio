@@ -755,7 +755,7 @@ function SkillsPage() {
   const [form,    setForm]    = useState({ name: "", category: "Frontend", color: "#5ba898" });
   const [toast,   showToast]  = useToast();
 
-  const CATS   = ["Frontend", "Backend", "Database", "DevOps", "Design", "Other"];
+  const CATS   = ["Frontend", "Animation", "Backend", "Database", "Tools", "Other"];
   const COLORS = ["#5ba898", "#d4935a", "#c96a6a", "#7aaa6a", "#8a7ab8", "#64a0c8"];
 
   useEffect(() => {

@@ -35,14 +35,11 @@ useEffect(() => {
     setLoading(true);
     apiGetProjects()
       .then(data => {
-        console.log("projects fetched:", data);   // ← add this
         setProjects(
           data.filter(p => p.status === "Live" || p.status === "WIP" || p.featured)
         );
       })
-      .catch((err) => {
-        console.error("projects fetch error:", err);  // ← add this
-      })
+      .catch(() => {})
       .finally(() => setLoading(false));
   };
 

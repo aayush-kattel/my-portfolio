@@ -1362,7 +1362,7 @@ function SettingsPage() {
   const handleLogout = () => {
     localStorage.removeItem("ak_token");
     sessionStorage.removeItem("ak_admin");
-    navigate("/");
+    window.location.href = "/"; 
   };
 
   const saveCredentials = async () => {

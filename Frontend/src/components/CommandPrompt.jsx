@@ -102,21 +102,22 @@ export default function CommandPrompt({ devOpened, setDevOpened }) {
     if (!cmd) return;
 
     if (cmd === "sudo login --admin") {
-      setDevOpened(false);
-      setTimeout(() => {
-        showToast("🔐 Welcome to admin login page");
-        setTimeout(() => navigate("/admin-login"), 300);
-      }, 150);
-      setInput(""); setHistIdx(-1); return;
-    }
-    if (cmd === "sudo login --exit") {
-      setDevOpened(false);
-      setTimeout(() => {
-        showToast("🏠 Welcome back to portfolio");
-        setTimeout(() => navigate("/"), 300);
-      }, 150);
-      setInput(""); setHistIdx(-1); return;
-    }
+  showToast("🔐 Welcome to admin login page");
+  setTimeout(() => {
+    setDevOpened(false);
+    navigate("/admin-login");
+  }, 1500);                    // ← wait for toast to show, then close+navigate
+  setInput(""); setHistIdx(-1); return;
+}
+
+if (cmd === "sudo login --exit") {
+  showToast("🏠 Welcome back to portfolio");
+  setTimeout(() => {
+    setDevOpened(false);
+    navigate("/", { state: { refresh: Date.now() } });
+  }, 1500);                    // ← wait for toast to show, then close+navigate
+  setInput(""); setHistIdx(-1); return;
+}
 
     if (cmd === "clear") { setHistory([]); setInput(""); setHistIdx(-1); return; }
     if (cmd === "exit")  { setDevOpened(false); setInput(""); setHistIdx(-1); return; }

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import FloatingNav from "../components/FloatingNav";
 import ThemeToggle from "../components/ThemeToggle";
@@ -11,6 +11,7 @@ import ProjectsSection from "../components/ProjectsSection";
 import ContactSection from "../components/ContactSection";
 
 export default function Portfolio() {
+  const [refreshKey, setRefreshKey] = useState(0);
   useScrollReveal();
 
   useEffect(() => {
@@ -21,13 +22,13 @@ export default function Portfolio() {
     <>
       <FloatingNav />
       <ThemeToggle />
-      <DevModeToggle />
+      <DevModeToggle onClose={() => setRefreshKey(k => k + 1)} />
 
       <main>
         <HeroSection />
         <AboutSection />
         <SkillsSection />
-        <ProjectsSection />
+        <ProjectsSection key={refreshKey} />
         <ContactSection />
       </main>
     </>

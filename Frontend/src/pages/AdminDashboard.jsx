@@ -1228,7 +1228,6 @@ function ExperiencePage() {
 }
 
 /* ─────────────────────── Page: Messages ───────────────────────── */
-/* ─────────────────────── Page: Messages ───────────────────────── */
 function MessagesPage() {
   const t = useT();
   const [messages, setMessages] = useState([]);
@@ -1447,6 +1446,40 @@ function MessagesPage() {
           {/* Message Detail - hide on mobile when no message selected */}
           {selected && (!showListOnly || !isMobile) && (
             <Card style={{ position: "relative" }}>
+              {/* Close button for desktop (top right corner) */}
+              {!isMobile && (
+                <button
+                  onClick={closeMessage}
+                  style={{
+                    position: "absolute",
+                    top: "16px",
+                    right: "16px",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    color: t("rgba(26,18,8,0.4)", "rgba(228,230,235,0.5)"),
+                    fontSize: "18px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "6px",
+                    borderRadius: "6px",
+                    transition: "all 0.2s",
+                    zIndex: 2,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = t("rgba(26,18,8,0.08)", "rgba(255,255,255,0.1)");
+                    e.currentTarget.style.color = "#c96a6a";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = t("rgba(26,18,8,0.4)", "rgba(228,230,235,0.5)");
+                  }}
+                >
+                  <FaXmark size={18} />
+                </button>
+              )}
+              
               <div style={{ 
                 display: "flex", 
                 alignItems: "flex-start", 
@@ -1454,6 +1487,7 @@ function MessagesPage() {
                 marginBottom: "16px",
                 flexDirection: isMobile ? "column" : "row",
                 gap: isMobile ? "12px" : "0",
+                paddingRight: !isMobile ? "32px" : "0", // Space for close button on desktop
               }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ 
@@ -1561,8 +1595,21 @@ function MessagesPage() {
         </div>
       )}
       
-      {/* Add responsive styles for messages page */}
       <style>{`
+        @keyframes borderSlide {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        
+        @keyframes toastIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        
         @media (max-width: 768px) {
           .message-list-item {
             margin-bottom: 10px;

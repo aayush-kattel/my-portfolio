@@ -105,7 +105,7 @@ export default function CommandPrompt({ devOpened, setDevOpened }) {
       setDevOpened(false);
       setTimeout(() => {
         showToast("🔐 Welcome to admin login page");
-        setTimeout(() => window.location.href = "/admin-login", 300);
+        setTimeout(() => navigate("/admin-login"), 300);
       }, 150);
       setInput(""); setHistIdx(-1); return;
     }

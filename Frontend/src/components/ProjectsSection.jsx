@@ -132,7 +132,7 @@ useEffect(() => {
 
           {/* Card — only when data is ready */}
           {!loading && projects.length > 0 && p && (
-            <div className="reveal">
+            <div>
               <div style={{ position:"relative", borderRadius:"22px" }}>
                 <div style={{ position:"absolute", inset:0, borderRadius:"22px", background:"linear-gradient(90deg,transparent,#5ba898,#d4935a,#c96a6a,#7aaa6a,#8a7ab8,#5ba898,transparent)", backgroundSize:"200% 100%", animation:"borderSlide 3s linear infinite" }} />
                 <div style={{ position:"relative", zIndex:1, margin:"2px", borderRadius:"20px", padding:"clamp(16px,4vw,32px)", background:t("rgba(255,253,247,0.92)","rgba(36,37,38,0.92)"), boxShadow:t("0 4px 32px rgba(26,18,8,0.06)","0 4px 32px rgba(0,0,0,0.25)"), transition:"background 0.6s" }}>

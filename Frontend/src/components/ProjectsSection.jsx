@@ -30,25 +30,30 @@ export default function ProjectsSection() {
   const [direction, setDir]      = useState(1);
   const t = (l, d) => isDark ? d : l;
 
-  useEffect(() => {
-    const fetchProjects = () => {
-      setLoading(true);
-      apiGetProjects()
-        .then(data => setProjects(
+useEffect(() => {
+  const fetchProjects = () => {
+    setLoading(true);
+    apiGetProjects()
+      .then(data => {
+        console.log("projects fetched:", data);   // ← add this
+        setProjects(
           data.filter(p => p.status === "Live" || p.status === "WIP" || p.featured)
-        ))
-        .catch(() => {})
-        .finally(() => setLoading(false));
-    };
+        );
+      })
+      .catch((err) => {
+        console.error("projects fetch error:", err);  // ← add this
+      })
+      .finally(() => setLoading(false));
+  };
 
-    fetchProjects();
+  fetchProjects();
 
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") fetchProjects();
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
-    return () => document.removeEventListener("visibilitychange", handleVisibility);
-  }, []);
+  const handleVisibility = () => {
+    if (document.visibilityState === "visible") fetchProjects();
+  };
+  document.addEventListener("visibilitychange", handleVisibility);
+  return () => document.removeEventListener("visibilitychange", handleVisibility);
+}, []);
 
   const pad = (n) => String(n).padStart(2, "0");
 

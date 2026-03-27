@@ -1,5 +1,6 @@
 // pages/Portfolio.jsx
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import FloatingNav from "../components/FloatingNav";
 import ThemeToggle from "../components/ThemeToggle";
@@ -15,6 +16,7 @@ import ContactSection from "../components/ContactSection";
 export default function Portfolio() {
   // Enable scroll animations
   useScrollReveal();
+  const location = useLocation();
 
   // Smooth scrolling for anchor links
   useEffect(() => {
@@ -33,7 +35,7 @@ export default function Portfolio() {
         <HeroSection />
         <AboutSection />
         <SkillsSection />
-        <ProjectsSection />
+        <ProjectsSection key={location.key}/>
         <ContactSection />
       </main>
     </>

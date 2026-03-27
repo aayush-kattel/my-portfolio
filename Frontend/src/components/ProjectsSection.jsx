@@ -34,7 +34,7 @@ export default function ProjectsSection() {
     setLoading(true);
     apiGetProjects()
       .then(data => setProjects(data.filter(p => p.status === "Live" || p.status === "WIP" || p.featured)))
-      .catch(() => {});
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

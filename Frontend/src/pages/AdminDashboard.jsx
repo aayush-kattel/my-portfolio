@@ -882,15 +882,15 @@ function ProjectsPage() {
 
   const uploadProjectImage = async (file) => {
     const fd    = new FormData();
-    fd.append("logo", file);
+    fd.append("projectImage", file);
     const BASE  = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
     const token = localStorage.getItem("ak_token");
-    const res   = await fetch(`${BASE}/upload/logo`, {
+    const res   = await fetch(`${BASE}/upload/project-image`, {
       method: "POST", headers: { Authorization: `Bearer ${token}` }, body: fd,
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Upload failed");
-    return data.logoUrl;
+    return data.imageUrl;
   };
 
   const submit = async () => {

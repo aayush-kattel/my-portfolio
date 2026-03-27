@@ -25,14 +25,17 @@ export default function ProjectsSection() {
   const autoRef    = useRef(null);
   const barRef     = useRef(null);
   const [projects,  setProjects]  = useState([]);
+  const [loading,  setLoading]   = useState(true);
   const [current,   setCurrent]   = useState(0);
   const [direction, setDir]       = useState(1);
   const t = (l, d) => isDark ? d : l;
 
   useEffect(() => {
+    setLoading(true);
     apiGetProjects()
       .then(data => setProjects(data.filter(p => p.status === "Live" || p.status === "WIP" || p.featured)))
       .catch(() => {});
+      .finally(() => setLoading(false));
   }, []);
 
   const pad = (n) => String(n).padStart(2, "0");
@@ -66,15 +69,17 @@ export default function ProjectsSection() {
     exit:   (d) => ({ x: d > 0 ? -60 : 60, opacity: 0 }),
   };
 
-  if (projects.length === 0) return (
-    <section id="projects" ref={sectionRef} style={{ position:"relative", overflow:"hidden", background:"transparent", padding:"90px clamp(18px,5vw,40px) 70px" }}>
-      <AnimatedBackground sectionRef={sectionRef} />
-      <div style={{ position:"relative", zIndex:1, maxWidth:"1100px", margin:"0 auto" }}>
-        <AKLogo />
-        <p style={{ color:"#5ba898", fontFamily:"monospace", fontSize:"13px", marginTop:"20px" }}>Loading projects…</p>
-      </div>
-    </section>
-  );
+  if (loading || projects.length === 0) return (
+  <section id="projects" ref={sectionRef} style={{ position:"relative", overflow:"hidden", background:"transparent", padding:"90px clamp(18px,5vw,40px) 70px" }}>
+    <AnimatedBackground sectionRef={sectionRef} />
+    <div style={{ position:"relative", zIndex:1, maxWidth:"1100px", margin:"0 auto" }}>
+      <AKLogo />
+      <p style={{ color:"#5ba898", fontFamily:"monospace", fontSize:"13px", marginTop:"20px" }}>
+        {loading ? "Loading projects…" : "No projects to display yet."}
+      </p>
+    </div>
+  </section>
+);
 
   const p = projects[current];
 

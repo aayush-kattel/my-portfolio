@@ -116,4 +116,23 @@ router.delete("/cv", auth, async (req, res) => {
   }
 });
 
+const projectImgStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "portfolio/projects",
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "gif"],
+    transformation: [{ width: 800, height: 500, crop: "limit", quality: "auto" }],
+  },
+});
+
+const uploadProjectImg = multer({
+  storage: projectImgStorage,
+  limits: { fileSize: 3 * 1024 * 1024 }, // 3 MB
+});
+
+router.post("/project-image", auth, uploadProjectImg.single("projectImage"), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+  res.json({ imageUrl: req.file.path });
+});
+
 module.exports = router;

@@ -2,7 +2,7 @@ import { FaCode } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 import CommandPrompt from "./CommandPrompt";
 
-export default function DevModeToggle() {
+export default function DevModeToggle({ onClose }) {
   const [devOpened, setDevOpened] = useState(false);
 
   useEffect(() => {
@@ -10,11 +10,15 @@ export default function DevModeToggle() {
     return () => { document.body.style.overflow = ""; };
   }, [devOpened]);
 
+   const closeDev = () => {
+    setDevOpened(false);
+    onClose?.();                                        // ← call it here
+  };
   return (
     <>
       {devOpened && (
         <div
-          onClick={() => setDevOpened(false)}
+          onClick={closeDev} 
           style={{
             position: "fixed", inset: 0, zIndex: 9990,
             background: "rgba(5,8,15,0.88)",
@@ -26,11 +30,11 @@ export default function DevModeToggle() {
       )}
 
       {devOpened && (
-        <CommandPrompt devOpened={devOpened} setDevOpened={setDevOpened} />
+        <CommandPrompt devOpened={devOpened} setDevOpened={closeDev}  />
       )}
 
       <button
-        onClick={() => setDevOpened(!devOpened)}
+        onClick={() => devOpened ? closeDev() : setDevOpened(true)}
         aria-label="Toggle Dev Mode"
         style={{
           position: "fixed",

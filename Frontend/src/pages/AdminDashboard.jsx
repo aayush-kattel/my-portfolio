@@ -1291,13 +1291,10 @@ function MessagesPage() {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // On mobile: show list or detail view based on selection
-  const showListOnly = isMobile && selected;
-  const showDetailOnly = isMobile && selected;
 
   return (
     <div>
@@ -1325,7 +1322,7 @@ function MessagesPage() {
         </span>
         
         {/* Back button for mobile when viewing message */}
-        {showDetailOnly && (
+        {isMobile && selected && (
           <Btn 
             onClick={closeMessage} 
             small 
@@ -1351,284 +1348,343 @@ function MessagesPage() {
           </p>
         </Card>
       ) : (
-        <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: showListOnly ? "1fr" : (selected ? "1fr 1.4fr" : "1fr"),
-          gap: "16px",
-          transition: "all 0.3s ease",
-        }}>
-          {/* Message List - hide on mobile when viewing detail */}
-          {(!showDetailOnly || !isMobile) && (
-            <div>
-              {messages.map(m => (
-                <div 
-                  key={m._id} 
-                  onClick={() => open(m)}
-                  style={{
-                    cursor: "pointer", 
-                    padding: "14px 16px", 
-                    marginBottom: "8px", 
-                    borderRadius: "12px",
-                    background: selected?._id === m._id 
-                      ? t("rgba(91,168,152,0.08)", "rgba(91,168,152,0.12)") 
-                      : t("rgba(255,253,247,0.88)", "rgba(36,37,38,0.88)"),
-                    border: `1px solid ${selected?._id === m._id 
-                      ? "#5ba898" 
-                      : t("rgba(26,18,8,0.07)", "rgba(255,255,255,0.07)")}`,
-                    transition: "all .2s",
-                  }}
-                  onMouseEnter={e => { 
-                    if (selected?._id !== m._id) 
-                      e.currentTarget.style.borderColor = "#5ba898"; 
-                  }}
-                  onMouseLeave={e => { 
-                    if (selected?._id !== m._id) 
-                      e.currentTarget.style.borderColor = t("rgba(26,18,8,0.07)", "rgba(255,255,255,0.07)"); 
-                  }}
-                >
-                  <div style={{ 
-                    display: "flex", 
-                    alignItems: "center", 
-                    gap: "8px", 
-                    marginBottom: "3px",
-                    flexWrap: "wrap",
-                  }}>
-                    <div style={{ 
-                      width: "7px", 
-                      height: "7px", 
-                      borderRadius: "50%", 
-                      background: m.read ? "transparent" : "#5ba898", 
-                      border: m.read ? `1px solid ${t("rgba(26,18,8,0.2)", "rgba(255,255,255,0.2)")}` : undefined, 
-                      flexShrink: 0 
-                    }} />
-                    <span style={{ 
-                      fontSize: "13px", 
-                      fontWeight: m.read ? 500 : 700, 
-                      color: t("#1a1208", "#e4e6eb"), 
-                      flex: 1,
-                      minWidth: "120px",
-                    }}>
-                      {m.name}
-                    </span>
-                    <span style={{ 
-                      fontSize: "10px", 
-                      fontFamily: "monospace", 
-                      color: t("rgba(26,18,8,0.35)", "rgba(228,230,235,0.35)"),
-                      flexShrink: 0,
-                    }}>
-                      {new Date(m.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div style={{ 
-                    fontSize: "11px", 
-                    color: t("rgba(26,18,8,0.5)", "rgba(228,230,235,0.45)"), 
-                    paddingLeft: "15px", 
-                    fontFamily: "monospace",
-                    marginBottom: "4px",
-                  }}>
-                    {m.subject || "No subject"}
-                  </div>
-                  <div style={{ 
-                    fontSize: "11px", 
-                    color: t("rgba(26,18,8,0.4)", "rgba(228,230,235,0.35)"), 
-                    paddingLeft: "15px", 
-                    whiteSpace: "nowrap", 
-                    overflow: "hidden", 
-                    textOverflow: "ellipsis" 
-                  }}>
-                    {m.message}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Message Detail - hide on mobile when no message selected */}
-          {selected && (!showListOnly || !isMobile) && (
-            <Card style={{ position: "relative" }}>
-              {/* Close button for desktop (top right corner) */}
-              {!isMobile && (
-                <button
-                  onClick={closeMessage}
-                  style={{
-                    position: "absolute",
-                    top: "16px",
-                    right: "16px",
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    color: t("rgba(26,18,8,0.4)", "rgba(228,230,235,0.5)"),
-                    fontSize: "18px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "6px",
-                    borderRadius: "6px",
-                    transition: "all 0.2s",
-                    zIndex: 2,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = t("rgba(26,18,8,0.08)", "rgba(255,255,255,0.1)");
-                    e.currentTarget.style.color = "#c96a6a";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.color = t("rgba(26,18,8,0.4)", "rgba(228,230,235,0.5)");
-                  }}
-                >
-                  <FaXmark size={18} />
-                </button>
-              )}
-              
-              <div style={{ 
-                display: "flex", 
-                alignItems: "flex-start", 
-                justifyContent: "space-between", 
-                marginBottom: "16px",
-                flexDirection: isMobile ? "column" : "row",
-                gap: isMobile ? "12px" : "0",
-                paddingRight: !isMobile ? "32px" : "0", // Space for close button on desktop
-              }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ 
-                    fontSize: "16px", 
-                    fontWeight: 700, 
-                    fontFamily: "Georgia,serif", 
-                    color: t("#1a1208", "#e4e6eb"), 
-                    marginBottom: "4px",
-                    wordBreak: "break-word",
-                  }}>
-                    {selected.name}
-                  </div>
-                  <a 
-                    href={`mailto:${selected.email}`} 
-                    style={{ 
-                      fontSize: "12px", 
-                      fontFamily: "monospace", 
-                      color: "#5ba898", 
-                      textDecoration: "none",
-                      wordBreak: "break-all",
-                      display: "inline-block",
-                    }}
-                  >
-                    {selected.email}
-                  </a>
-                </div>
+        <>
+          {/* On mobile: show either list OR detail, not both */}
+          {isMobile ? (
+            // Mobile View
+            !selected ? (
+              // Show message list
+              <div>
+                {messages.map(m => (
+                  <Card key={m._id}>
+                    <div 
+                      onClick={() => open(m)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div style={{ 
+                        display: "flex", 
+                        alignItems: "center", 
+                        gap: "8px", 
+                        marginBottom: "8px",
+                        flexWrap: "wrap",
+                      }}>
+                        <div style={{ 
+                          width: "8px", 
+                          height: "8px", 
+                          borderRadius: "50%", 
+                          background: m.read ? "transparent" : "#5ba898", 
+                          border: m.read ? `1px solid ${t("rgba(26,18,8,0.2)", "rgba(255,255,255,0.2)")}` : undefined, 
+                          flexShrink: 0 
+                        }} />
+                        <span style={{ 
+                          fontSize: "14px", 
+                          fontWeight: m.read ? 500 : 700, 
+                          color: t("#1a1208", "#e4e6eb"), 
+                          flex: 1,
+                        }}>
+                          {m.name}
+                        </span>
+                        <span style={{ 
+                          fontSize: "10px", 
+                          fontFamily: "monospace", 
+                          color: t("rgba(26,18,8,0.35)", "rgba(228,230,235,0.35)"),
+                          flexShrink: 0,
+                        }}>
+                          {new Date(m.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div style={{ 
+                        fontSize: "11px", 
+                        color: t("rgba(26,18,8,0.5)", "rgba(228,230,235,0.45)"), 
+                        fontFamily: "monospace",
+                        marginBottom: "6px",
+                      }}>
+                        {m.subject || "No subject"}
+                      </div>
+                      <div style={{ 
+                        fontSize: "12px", 
+                        color: t("rgba(26,18,8,0.6)", "rgba(228,230,235,0.5)"), 
+                        lineHeight: 1.5,
+                      }}>
+                        {m.message.length > 100 ? m.message.substring(0, 100) + "..." : m.message}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              // Show message detail on mobile
+              <Card>
                 <div style={{ 
                   display: "flex", 
-                  gap: "8px", 
-                  flexShrink: 0,
-                  alignSelf: isMobile ? "flex-start" : "center",
+                  justifyContent: "space-between", 
+                  alignItems: "flex-start",
+                  marginBottom: "16px",
                 }}>
-                  <Btn small onClick={() => del(selected._id)} danger>
-                    <FaTrash />
-                  </Btn>
-                  {isMobile && (
-                    <Btn small onClick={closeMessage} color="#8a7ab8">
-                      <FaXmark /> Close
+                  <div style={{ flex: 1 }}>
+                    <div style={{ 
+                      fontSize: "18px", 
+                      fontWeight: 700, 
+                      fontFamily: "Georgia,serif", 
+                      color: t("#1a1208", "#e4e6eb"), 
+                      marginBottom: "6px",
+                      wordBreak: "break-word",
+                    }}>
+                      {selected.name}
+                    </div>
+                    <a 
+                      href={`mailto:${selected.email}`} 
+                      style={{ 
+                        fontSize: "12px", 
+                        fontFamily: "monospace", 
+                        color: "#5ba898", 
+                        textDecoration: "none",
+                        wordBreak: "break-all",
+                      }}
+                    >
+                      {selected.email}
+                    </a>
+                  </div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <Btn small onClick={() => del(selected._id)} danger>
+                      <FaTrash />
                     </Btn>
-                  )}
+                  </div>
                 </div>
-              </div>
-              
-              {selected.subject && (
+                
+                {selected.subject && (
+                  <div style={{ 
+                    fontSize: "11px", 
+                    fontFamily: "monospace", 
+                    letterSpacing: "1.5px", 
+                    textTransform: "uppercase", 
+                    color: "#5ba898", 
+                    marginBottom: "12px" 
+                  }}>
+                    {selected.subject}
+                  </div>
+                )}
+                
                 <div style={{ 
-                  fontSize: "11px", 
-                  fontFamily: "monospace", 
-                  letterSpacing: "1.5px", 
-                  textTransform: "uppercase", 
-                  color: "#5ba898", 
-                  marginBottom: "8px" 
+                  fontSize: "13px", 
+                  lineHeight: 1.8, 
+                  color: t("rgba(26,18,8,0.7)", "rgba(228,230,235,0.65)"), 
+                  padding: "16px", 
+                  borderRadius: "12px", 
+                  background: t("rgba(26,18,8,0.03)", "rgba(255,255,255,0.03)"), 
+                  border: `1px solid ${t("rgba(26,18,8,0.06)", "rgba(255,255,255,0.05)")}`,
+                  wordBreak: "break-word",
+                  whiteSpace: "pre-wrap",
+                  marginBottom: "16px",
                 }}>
-                  {selected.subject}
+                  {selected.message}
                 </div>
-              )}
-              
-              <div style={{ 
-                fontSize: "13px", 
-                lineHeight: 1.8, 
-                color: t("rgba(26,18,8,0.7)", "rgba(228,230,235,0.65)"), 
-                padding: "14px", 
-                borderRadius: "10px", 
-                background: t("rgba(26,18,8,0.03)", "rgba(255,255,255,0.03)"), 
-                border: `1px solid ${t("rgba(26,18,8,0.06)", "rgba(255,255,255,0.05)")}`,
-                wordBreak: "break-word",
-                whiteSpace: "pre-wrap",
-                maxHeight: isMobile ? "300px" : "auto",
-                overflowY: "auto",
-              }}>
-                {selected.message}
-              </div>
-              
-              <div style={{ 
-                marginTop: "12px", 
-                fontSize: "10px", 
-                fontFamily: "monospace", 
-                color: t("rgba(26,18,8,0.35)", "rgba(228,230,235,0.3)") 
-              }}>
-                Received {new Date(selected.createdAt).toLocaleString()}
-              </div>
-              
-              <div style={{ marginTop: "12px" }}>
+                
+                <div style={{ 
+                  fontSize: "10px", 
+                  fontFamily: "monospace", 
+                  color: t("rgba(26,18,8,0.35)", "rgba(228,230,235,0.3)"),
+                  marginBottom: "16px",
+                }}>
+                  Received {new Date(selected.createdAt).toLocaleString()}
+                </div>
+                
                 <a 
                   href={`mailto:${selected.email}?subject=Re: ${encodeURIComponent(selected.subject || "Your message")}`}
                   style={{ 
-                    display: "inline-flex", 
+                    display: "flex", 
                     alignItems: "center", 
-                    gap: "6px", 
-                    padding: "8px 16px", 
-                    borderRadius: "8px", 
+                    justifyContent: "center",
+                    gap: "8px", 
+                    padding: "10px 20px", 
+                    borderRadius: "10px", 
                     background: "#5ba898", 
                     color: "#fff", 
-                    fontSize: "12px", 
+                    fontSize: "13px", 
                     fontFamily: "monospace", 
                     fontWeight: 600, 
                     textDecoration: "none",
-                    width: isMobile ? "100%" : "auto",
-                    justifyContent: isMobile ? "center" : "flex-start",
+                    width: "100%",
                   }}>
                   <FaEnvelope /> Reply via Email
                 </a>
+              </Card>
+            )
+          ) : (
+            // Desktop View - Split layout with rainbow borders
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: selected ? "1fr 1.4fr" : "1fr",
+              gap: "20px",
+            }}>
+              {/* Message List */}
+              <div>
+                {messages.map(m => (
+                  <Card key={m._id}>
+                    <div 
+                      onClick={() => open(m)}
+                      style={{ 
+                        cursor: "pointer",
+                        opacity: selected?._id === m._id ? 0.8 : 1,
+                      }}
+                    >
+                      <div style={{ 
+                        display: "flex", 
+                        alignItems: "center", 
+                        gap: "8px", 
+                        marginBottom: "8px",
+                        flexWrap: "wrap",
+                      }}>
+                        <div style={{ 
+                          width: "8px", 
+                          height: "8px", 
+                          borderRadius: "50%", 
+                          background: m.read ? "transparent" : "#5ba898", 
+                          border: m.read ? `1px solid ${t("rgba(26,18,8,0.2)", "rgba(255,255,255,0.2)")}` : undefined, 
+                          flexShrink: 0 
+                        }} />
+                        <span style={{ 
+                          fontSize: "14px", 
+                          fontWeight: m.read ? 500 : 700, 
+                          color: t("#1a1208", "#e4e6eb"), 
+                          flex: 1,
+                        }}>
+                          {m.name}
+                        </span>
+                        <span style={{ 
+                          fontSize: "10px", 
+                          fontFamily: "monospace", 
+                          color: t("rgba(26,18,8,0.35)", "rgba(228,230,235,0.35)"),
+                          flexShrink: 0,
+                        }}>
+                          {new Date(m.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div style={{ 
+                        fontSize: "11px", 
+                        color: t("rgba(26,18,8,0.5)", "rgba(228,230,235,0.45)"), 
+                        fontFamily: "monospace",
+                        marginBottom: "6px",
+                      }}>
+                        {m.subject || "No subject"}
+                      </div>
+                      <div style={{ 
+                        fontSize: "12px", 
+                        color: t("rgba(26,18,8,0.6)", "rgba(228,230,235,0.5)"), 
+                        lineHeight: 1.5,
+                      }}>
+                        {m.message.length > 100 ? m.message.substring(0, 100) + "..." : m.message}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
               </div>
-            </Card>
+
+              {/* Message Detail - Desktop */}
+              {selected && (
+                <Card>
+                  <div style={{ 
+                    display: "flex", 
+                    justifyContent: "space-between", 
+                    alignItems: "flex-start",
+                    marginBottom: "16px",
+                  }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ 
+                        fontSize: "18px", 
+                        fontWeight: 700, 
+                        fontFamily: "Georgia,serif", 
+                        color: t("#1a1208", "#e4e6eb"), 
+                        marginBottom: "6px",
+                        wordBreak: "break-word",
+                      }}>
+                        {selected.name}
+                      </div>
+                      <a 
+                        href={`mailto:${selected.email}`} 
+                        style={{ 
+                          fontSize: "12px", 
+                          fontFamily: "monospace", 
+                          color: "#5ba898", 
+                          textDecoration: "none",
+                          wordBreak: "break-all",
+                        }}
+                      >
+                        {selected.email}
+                      </a>
+                    </div>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <Btn small onClick={() => del(selected._id)} danger>
+                        <FaTrash />
+                      </Btn>
+                      <Btn small onClick={closeMessage} color="#8a7ab8">
+                        <FaXmark />
+                      </Btn>
+                    </div>
+                  </div>
+                  
+                  {selected.subject && (
+                    <div style={{ 
+                      fontSize: "11px", 
+                      fontFamily: "monospace", 
+                      letterSpacing: "1.5px", 
+                      textTransform: "uppercase", 
+                      color: "#5ba898", 
+                      marginBottom: "12px" 
+                    }}>
+                      {selected.subject}
+                    </div>
+                  )}
+                  
+                  <div style={{ 
+                    fontSize: "13px", 
+                    lineHeight: 1.8, 
+                    color: t("rgba(26,18,8,0.7)", "rgba(228,230,235,0.65)"), 
+                    padding: "16px", 
+                    borderRadius: "12px", 
+                    background: t("rgba(26,18,8,0.03)", "rgba(255,255,255,0.03)"), 
+                    border: `1px solid ${t("rgba(26,18,8,0.06)", "rgba(255,255,255,0.05)")}`,
+                    wordBreak: "break-word",
+                    whiteSpace: "pre-wrap",
+                    marginBottom: "16px",
+                    maxHeight: "400px",
+                    overflowY: "auto",
+                  }}>
+                    {selected.message}
+                  </div>
+                  
+                  <div style={{ 
+                    fontSize: "10px", 
+                    fontFamily: "monospace", 
+                    color: t("rgba(26,18,8,0.35)", "rgba(228,230,235,0.3)"),
+                    marginBottom: "16px",
+                  }}>
+                    Received {new Date(selected.createdAt).toLocaleString()}
+                  </div>
+                  
+                  <a 
+                    href={`mailto:${selected.email}?subject=Re: ${encodeURIComponent(selected.subject || "Your message")}`}
+                    style={{ 
+                      display: "inline-flex", 
+                      alignItems: "center", 
+                      gap: "8px", 
+                      padding: "10px 20px", 
+                      borderRadius: "10px", 
+                      background: "#5ba898", 
+                      color: "#fff", 
+                      fontSize: "13px", 
+                      fontFamily: "monospace", 
+                      fontWeight: 600, 
+                      textDecoration: "none",
+                    }}>
+                    <FaEnvelope /> Reply via Email
+                  </a>
+                </Card>
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
-      
-      <style>{`
-        @keyframes borderSlide {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-        
-        @keyframes toastIn {
-          from { opacity: 0; transform: translateY(-8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-          .message-list-item {
-            margin-bottom: 10px;
-          }
-          
-          .message-detail-card {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1000;
-            margin: 0 !important;
-            border-radius: 0 !important;
-            overflow-y: auto;
-            background: ${t("rgba(255,253,247,0.98)", "rgba(20,21,22,0.98)")} !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -113,7 +113,7 @@ export default function CommandPrompt({ devOpened, setDevOpened }) {
       setDevOpened(false);
       setTimeout(() => {
         showToast("🏠 Welcome back to portfolio");
-        setTimeout(() => window.location.href = "/", 300);
+        setTimeout(() => navigate("/"), 300);
       }, 150);
       setInput(""); setHistIdx(-1); return;
     }

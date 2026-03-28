@@ -3,20 +3,20 @@ import { FaTimes, FaMinus, FaExpand } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const S = {
-  out:     { marginLeft: "16px", marginBottom: "6px", paddingTop: "6px" },
-  accent:  { color: "#a855f7" },
-  green:   { color: "#34d399" },
-  dim:     { color: "rgba(255,255,255,0.45)" },
-  muted:   { color: "rgba(255,255,255,0.65)", marginBottom: "4px" },
-  error:   { color: "#f87171" },
-  badge:   { background: "rgba(168,85,247,0.15)", border: "1px solid rgba(168,85,247,0.3)", color: "#c4b5fd", borderRadius: "4px", padding: "1px 7px", fontSize: "11px" },
+  out: { marginLeft: "16px", marginBottom: "6px", paddingTop: "6px" },
+  accent: { color: "#a855f7" },
+  green: { color: "#34d399" },
+  dim: { color: "rgba(255,255,255,0.45)" },
+  muted: { color: "rgba(255,255,255,0.65)", marginBottom: "4px" },
+  error: { color: "#f87171" },
+  badge: { background: "rgba(168,85,247,0.15)", border: "1px solid rgba(168,85,247,0.3)", color: "#c4b5fd", borderRadius: "4px", padding: "1px 7px", fontSize: "11px" },
 };
 
-const About    = () => <div style={S.out}><p style={S.muted}>👋 Hi, I'm <span style={S.accent}>Aayush</span> — full-stack developer based in Nepal.</p><p style={S.dim}>React · Node.js · MongoDB · Open to work</p></div>;
-const Help     = () => (
+const About = () => <div style={S.out}><p style={S.muted}>👋 Hi, I'm <span style={S.accent}>Aayush</span> — full-stack developer based in Nepal.</p><p style={S.dim}>React · Node.js · MongoDB · Open to work</p></div>;
+const Help = () => (
   <div style={S.out}>
     <p style={S.dim}>Available commands:</p>
-    {[["about", "Who am I"], ["skills", "Tech stack"], ["projects", "Things I've built"], ["contact", "Get in touch"], ["sudo login --admin", "Open admin login"], ["sudo login --exit", "Return to portfolio"], ["clear", "Clear terminal"], ["exit", "Close dev mode"]].map(([c, d]) => (
+    {[["about", "Who am I"], ["skills", "Tech stack"], ["projects", "Things I've built"], ["contact", "Get in touch"], ["sudo login --admin", "Open admin login"], ["sudo login --exit", "Return to portfolio"], ["sudo open -userdemand", "Open User Demand page"], ["sudo close -userdemand", "Close User Demand page"], ["clear", "Clear terminal"], ["exit", "Close dev mode"]].map(([c, d]) => (
       <div key={c} style={{ display: "flex", gap: "16px", marginBottom: "3px", flexWrap: "wrap" }}>
         <span style={{ ...S.accent, minWidth: "160px", fontFamily: "inherit" }}>{c}</span>
         <span style={S.dim}>{d}</span>
@@ -24,10 +24,10 @@ const Help     = () => (
     ))}
   </div>
 );
-const Skills   = () => <div style={S.out}>{[{ l: "Frontend", i: ["React", "Next.js", "Tailwind", "TypeScript"] }, { l: "Backend", i: ["Node.js", "Express", "Python"] }, { l: "Database", i: ["MongoDB", "PostgreSQL", "Redis"] }, { l: "DevOps", i: ["Docker", "Git", "Vercel"] }].map(({ l, i }) => <div key={l} style={{ marginBottom: "6px", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}><span style={{ ...S.green, minWidth: "76px" }}>{l}</span>{i.map(x => <span key={x} style={S.badge}>{x}</span>)}</div>)}</div>;
+const Skills = () => <div style={S.out}>{[{ l: "Frontend", i: ["React", "Next.js", "Tailwind", "TypeScript"] }, { l: "Backend", i: ["Node.js", "Express", "Python"] }, { l: "Database", i: ["MongoDB", "PostgreSQL", "Redis"] }, { l: "DevOps", i: ["Docker", "Git", "Vercel"] }].map(({ l, i }) => <div key={l} style={{ marginBottom: "6px", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}><span style={{ ...S.green, minWidth: "76px" }}>{l}</span>{i.map(x => <span key={x} style={S.badge}>{x}</span>)}</div>)}</div>;
 const Projects = () => <div style={S.out}>{[["E-Commerce Platform", "MERN stack shopping app"], ["Portfolio", "React + Vite + Tailwind"], ["Chat App", "Socket.io real-time messaging"]].map(([n, d]) => <div key={n} style={{ marginBottom: "6px" }}><span style={S.accent}>{n}</span><span style={S.dim}> — {d}</span></div>)}</div>;
-const Contact  = () => <div style={S.out}>{[["Email", "aayush@example.com"], ["GitHub", "github.com/aayush"], ["LinkedIn", "linkedin.com/in/aayush"]].map(([l, v]) => <div key={l} style={{ marginBottom: "4px" }}><span style={{ ...S.green, minWidth: "72px", display: "inline-block" }}>{l}</span><span style={S.accent}>{v}</span></div>)}</div>;
-const Invalid  = ({ cmd }) => <div style={S.out}><span style={S.error}>bash: {cmd}: command not found</span><span style={S.dim}> (type <span style={S.accent}>help</span> for commands)</span></div>;
+const Contact = () => <div style={S.out}>{[["Email", "aayush@example.com"], ["GitHub", "github.com/aayush"], ["LinkedIn", "linkedin.com/in/aayush"]].map(([l, v]) => <div key={l} style={{ marginBottom: "4px" }}><span style={{ ...S.green, minWidth: "72px", display: "inline-block" }}>{l}</span><span style={S.accent}>{v}</span></div>)}</div>;
+const Invalid = ({ cmd }) => <div style={S.out}><span style={S.error}>bash: {cmd}: command not found</span><span style={S.dim}> (type <span style={S.accent}>help</span> for commands)</span></div>;
 
 const PATH_MAP = { about: "~/about", skills: "~/skills", projects: "~/projects", contact: "~/contact", help: "~" };
 
@@ -57,12 +57,12 @@ function Toast({ msg }) {
 
 export default function CommandPrompt({ devOpened, setDevOpened }) {
   const navigate = useNavigate();
-  const [history, setHistory]       = useState([]);
-  const [input, setInput]           = useState("");
-  const [path, setPath]             = useState("~");
+  const [history, setHistory] = useState([]);
+  const [input, setInput] = useState("");
+  const [path, setPath] = useState("~");
   const [cmdHistory, setCmdHistory] = useState([]);
-  const [histIdx, setHistIdx]       = useState(-1);
-  const [toast, setToast]           = useState("");
+  const [histIdx, setHistIdx] = useState(-1);
+  const [toast, setToast] = useState("");
   const inputRef = useRef(null);
   const bottomRef = useRef(null);
 
@@ -76,12 +76,12 @@ export default function CommandPrompt({ devOpened, setDevOpened }) {
 
   function resolveOutput(cmd) {
     switch (cmd) {
-      case "about":    return <About />;
-      case "help":     return <Help />;
-      case "skills":   return <Skills />;
+      case "about": return <About />;
+      case "help": return <Help />;
+      case "skills": return <Skills />;
       case "projects": return <Projects />;
-      case "contact":  return <Contact />;
-      default:         return <Invalid cmd={cmd} />;
+      case "contact": return <Contact />;
+      default: return <Invalid cmd={cmd} />;
     }
   }
 
@@ -102,25 +102,44 @@ export default function CommandPrompt({ devOpened, setDevOpened }) {
     if (!cmd) return;
 
     if (cmd === "sudo login --admin") {
-  showToast("🔐 Welcome to admin login page");
-  setTimeout(() => {
-    setDevOpened(false);
-    navigate("/admin-login");
-  }, 1500);                    // ← wait for toast to show, then close+navigate
-  setInput(""); setHistIdx(-1); return;
-}
+      showToast("🔐 Welcome to admin login page");
+      setTimeout(() => {
+        setDevOpened(false);
+        navigate("/admin-login");
+      }, 1500);                    // ← wait for toast to show, then close+navigate
+      setInput(""); setHistIdx(-1); return;
+    }
 
-if (cmd === "sudo login --exit") {
-  showToast("🏠 Welcome back to portfolio");
-  setTimeout(() => {
-    setDevOpened(false);
-    navigate("/", { state: { refresh: Date.now() } });
-  }, 1500);                    // ← wait for toast to show, then close+navigate
-  setInput(""); setHistIdx(-1); return;
-}
+    if (cmd === "sudo login --exit") {
+      showToast("🏠 Welcome back to portfolio");
+      setTimeout(() => {
+        setDevOpened(false);
+        navigate("/", { state: { refresh: Date.now() } });
+      }, 1500);                    // ← wait for toast to show, then close+navigate
+      setInput(""); setHistIdx(-1); return;
+    }
+
+    // In handleKeyDown, add before "clear":
+    if (cmd === "sudo open -userdemand") {
+      showToast("🛠️ Opening User Demand…");
+      setTimeout(() => {
+        setDevOpened(false);
+        navigate("/user-demand");
+      }, 1200);
+      setInput(""); setHistIdx(-1); return;
+    }
+
+    if (cmd === "sudo close -userdemand") {
+      showToast("🏠 Closing User Demand…");
+      setTimeout(() => {
+        setDevOpened(false);
+        navigate("/");
+      }, 1200);
+      setInput(""); setHistIdx(-1); return;
+    }
 
     if (cmd === "clear") { setHistory([]); setInput(""); setHistIdx(-1); return; }
-    if (cmd === "exit")  { setDevOpened(false); setInput(""); setHistIdx(-1); return; }
+    if (cmd === "exit") { setDevOpened(false); setInput(""); setHistIdx(-1); return; }
 
     const newPath = PATH_MAP[cmd] ?? path;
     setHistory(prev => [...prev, { cmd, path, output: resolveOutput(cmd) }]);

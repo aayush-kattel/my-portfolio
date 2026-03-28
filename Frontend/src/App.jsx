@@ -1,13 +1,12 @@
-// App.jsx
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./hooks/useTheme";
 import LoadingIntro from "./components/LoadingIntro";
 
-// Pages
 import Portfolio from "./pages/portfolio";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import UserDemandPage from "./pages/UserDemandPage";  // ← add this
 
 function ProtectedRoute({ children }) {
   const isAuthed = sessionStorage.getItem("ak_admin") === "true";
@@ -19,14 +18,13 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      {/* LoadingIntro sits above everything — renders inside ThemeProvider
-          so useTheme() works and ThemeToggle affects background correctly */}
       {!loaded && <LoadingIntro onDone={() => setLoaded(true)} />}
 
       <BrowserRouter>
         <Routes>
-          <Route path="/"            element={<Portfolio />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/"             element={<Portfolio />} />
+          <Route path="/admin-login"  element={<AdminLogin />} />
+          <Route path="/user-demand"  element={<UserDemandPage />} />  {/* ← add this */}
           <Route
             path="/admin"
             element={

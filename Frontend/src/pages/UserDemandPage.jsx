@@ -89,9 +89,7 @@ function CVPreview({ data, cvTheme, photoSrc }) {
     projCard:  { background:"#0f1923", borderRadius:"5px", border:`1px solid ${t.muted}`, borderLeft:`2.5px solid ${t.accent}`, padding:"8px 10px" },
     projComing:{ background:`${t.muted}44`, borderRadius:"5px", border:`1px dashed ${t.highlight}`, borderLeft:`2.5px solid ${t.highlight}`, padding:"8px 10px" },
     projTitle: { fontFamily:"Georgia,serif", fontSize:".81rem", fontWeight:600, color:"#b8ccd8", marginBottom:"2px" },
-    projTitleComing: { fontFamily:"Georgia,serif", fontSize:".81rem", fontWeight:600, color:"", marginBottom:"2px" },
     projStack: { fontSize:".57rem", letterSpacing:".04em", color:t.accent, textTransform:"uppercase", fontWeight:500, marginBottom:"3px", fontFamily:"monospace" },
-    projStackComing: { fontSize:".57rem", letterSpacing:".04em", color:"", textTransform:"uppercase", fontWeight:500, marginBottom:"3px", fontFamily:"monospace" },
     projDesc:  { fontSize:".66rem", color:"#6a8aa5", lineHeight:1.4, textAlign:"justify" },
     expCard:   { background:"#0f1923", borderRadius:"5px", borderLeft:`2.5px solid ${t.accent}`, padding:"9px 13px" },
     expTitle:  { fontFamily:"Georgia,serif", fontSize:".86rem", fontWeight:600, color:t.accent, marginBottom:"4px" },
@@ -169,7 +167,6 @@ function CVPreview({ data, cvTheme, photoSrc }) {
         </div>
 
         <div style={s.secs}>
-          {/* Profile */}
           {data.profile && (
             <div>
               <div style={s.secLbl}>
@@ -181,7 +178,6 @@ function CVPreview({ data, cvTheme, photoSrc }) {
             </div>
           )}
 
-          {/* Education */}
           {allEdu.length > 0 && (
             <div>
               <div style={s.secLbl}>
@@ -208,7 +204,6 @@ function CVPreview({ data, cvTheme, photoSrc }) {
             </div>
           )}
 
-          {/* Projects */}
           {allProj.length > 0 && (
             <div>
               <div style={s.secLbl}>
@@ -219,24 +214,17 @@ function CVPreview({ data, cvTheme, photoSrc }) {
               <div style={s.projGrid}>
                 {allProj.map((p, i) => (
                   <div key={i} style={p.coming ? s.projComing : s.projCard}>
-                    <div style={{
-                      ...s.projTitle,
-                      color: p.coming ? t.highlight : "#b8ccd8",
-                    }}>
+                    <div style={{ ...s.projTitle, color: p.coming ? CV_THEMES[cvTheme].highlight : "#b8ccd8" }}>
                       {p.coming ? `+ ${p.title}` : p.title}
                     </div>
                     {p.stack && (
-                      <div style={{
-                        ...s.projStack,
-                        color: p.coming ? t.highlight : t.accent,
-                      }}>
-                        {p.coming ? p.stack.toUpperCase() : p.stack}
+                      <div style={{ ...s.projStack, color: p.coming ? CV_THEMES[cvTheme].highlight : CV_THEMES[cvTheme].accent }}>
+                        {p.stack.toUpperCase()}
                       </div>
                     )}
                     {p.desc && <div style={s.projDesc}>{p.desc}</div>}
-                    {/* Coming soon label when no desc */}
                     {p.coming && !p.desc && (
-                      <div style={{...s.projDesc, color: t.highlight, fontStyle:"italic"}}>
+                      <div style={{ ...s.projDesc, color: CV_THEMES[cvTheme].highlight, fontStyle:"italic" }}>
                         Coming soon…
                       </div>
                     )}
@@ -246,7 +234,6 @@ function CVPreview({ data, cvTheme, photoSrc }) {
             </div>
           )}
 
-          {/* Experience */}
           <div>
             <div style={s.secLbl}>
               <span style={s.secNum}>04</span>
@@ -254,7 +241,6 @@ function CVPreview({ data, cvTheme, photoSrc }) {
               <div style={s.secLine}/>
             </div>
             {hasExp ? (
-              /* ── Timeline format (same as Education) when entries exist ── */
               <div style={s.eduList}>
                 {allExp.map((e, i) => (
                   <div key={i} style={s.eduItem}>
@@ -272,7 +258,6 @@ function CVPreview({ data, cvTheme, photoSrc }) {
                 ))}
               </div>
             ) : (
-              /* ── Fallback box when no experience ── */
               <div style={s.expCard}>
                 <div style={s.expTitle}>
                   {data.expFallbackTitle || "Actively Seeking First Professional Role"}
@@ -295,12 +280,45 @@ function CVPreview({ data, cvTheme, photoSrc }) {
 }
 
 /* ═══════════════════════════════════════════════════════
+   HOISTED STABLE COMPONENTS
+   These MUST live outside CVGeneratorPage so React doesn't
+   treat them as new component types on every render, which
+   would unmount/remount every input and kill focus.
+   ═══════════════════════════════════════════════════════ */
+
+// RCard: rainbow border card
+function RCard({ title, children, style = {}, cardBg }) {
+  return (
+    <div style={{ position:"relative", borderRadius:"16px", marginBottom:"16px", overflow:"visible", ...style }}>
+      <div style={{ position:"absolute", inset:0, borderRadius:"16px", background:"linear-gradient(90deg,transparent,#5ba898,#d4935a,#c96a6a,#7aaa6a,#8a7ab8,#5ba898,transparent)", backgroundSize:"200% 100%", animation:"borderSlide 3s linear infinite" }}/>
+      <div style={{ position:"relative", zIndex:1, margin:"2px", borderRadius:"14px", padding:"20px 22px", background:cardBg, backdropFilter:"blur(16px)", overflow:"visible" }}>
+        {title && <div style={{ fontSize:"10px", fontFamily:"monospace", letterSpacing:"2px", textTransform:"uppercase", color:"#5ba898", marginBottom:"14px" }}>{title}</div>}
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// CvBtn
+function CvBtn({ onClick, children, small, danger, disabled, accent, style = {} }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{ display:"inline-flex", alignItems:"center", gap:"5px", padding:small?"5px 12px":"8px 16px", borderRadius:"7px", border:"none", cursor:disabled?"not-allowed":"pointer", background:danger?"#c96a6a":accent||"#5ba898", color:"#fff", fontSize:small?"11px":"12px", fontFamily:"monospace", fontWeight:600, opacity:disabled?0.6:1, transition:"opacity .2s", ...style }}
+      onMouseEnter={e => !disabled && (e.currentTarget.style.opacity = ".8")}
+      onMouseLeave={e => !disabled && (e.currentTarget.style.opacity = "1")}
+    >{children}</button>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
    CV GENERATOR PAGE — inner page component
    ═══════════════════════════════════════════════════════ */
 function CVGeneratorPage() {
   const { isDark } = useTheme();
   const photoRef   = useRef(null);
-  const T = (l, d) => isDark ? d : l;
+  const T = useCallback((l, d) => isDark ? d : l, [isDark]);
 
   const [step,        setStep]        = useState("form");
   const [cvTheme,     setCvTheme]     = useState("blue");
@@ -355,11 +373,11 @@ function CVGeneratorPage() {
   };
 
   /* ── data helpers ── */
-  const setField   = (k, v)      => setData(d => ({ ...d, [k]: v }));
-  const setArr     = (k, i, v)   => setData(d => { const a = [...d[k]]; a[i] = v; return { ...d, [k]: a }; });
-  const setArrObj  = (k, i, f, v)=> setData(d => ({ ...d, [k]: d[k].map((x, idx) => idx === i ? { ...x, [f]: v } : x) }));
-  const addItem    = (k, empty)  => setData(d => ({ ...d, [k]: [...d[k], empty] }));
-  const removeItem = (k, i)      => setData(d => ({ ...d, [k]: d[k].filter((_, idx) => idx !== i) }));
+  const setField   = useCallback((k, v)       => setData(d => ({ ...d, [k]: v })), []);
+  const setArr     = useCallback((k, i, v)    => setData(d => { const a = [...d[k]]; a[i] = v; return { ...d, [k]: a }; }), []);
+  const setArrObj  = useCallback((k, i, f, v) => setData(d => ({ ...d, [k]: d[k].map((x, idx) => idx === i ? { ...x, [f]: v } : x) })), []);
+  const addItem    = useCallback((k, empty)   => setData(d => ({ ...d, [k]: [...d[k], empty] })), []);
+  const removeItem = useCallback((k, i)       => setData(d => ({ ...d, [k]: d[k].filter((_, idx) => idx !== i) })), []);
 
   /* ── photo ── */
   const handlePhoto = e => {
@@ -394,36 +412,14 @@ function CVGeneratorPage() {
     setDownloading(false);
   }, [data.name]);
 
-  /* ── RCard: rainbow border card ── */
-  const RCard = ({ title, children, style = {} }) => (
-    <div style={{ position:"relative", borderRadius:"16px", marginBottom:"16px", overflow:"visible", ...style }}>
-      <div style={{ position:"absolute", inset:0, borderRadius:"16px", background:"linear-gradient(90deg,transparent,#5ba898,#d4935a,#c96a6a,#7aaa6a,#8a7ab8,#5ba898,transparent)", backgroundSize:"200% 100%", animation:"borderSlide 3s linear infinite" }}/>
-      <div style={{ position:"relative", zIndex:1, margin:"2px", borderRadius:"14px", padding:"20px 22px", background:cardBg, backdropFilter:"blur(16px)", overflow:"visible" }}>
-        {title && <div style={{ fontSize:"10px", fontFamily:"monospace", letterSpacing:"2px", textTransform:"uppercase", color:"#5ba898", marginBottom:"14px" }}>{title}</div>}
-        {children}
-      </div>
-    </div>
-  );
-
-  /* ── CvBtn ── */
-  const CvBtn = ({ onClick, children, small, danger, disabled, accent }) => (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      style={{ display:"inline-flex", alignItems:"center", gap:"5px", padding:small?"5px 12px":"8px 16px", borderRadius:"7px", border:"none", cursor:disabled?"not-allowed":"pointer", background:danger?"#c96a6a":accent||"#5ba898", color:"#fff", fontSize:small?"11px":"12px", fontFamily:"monospace", fontWeight:600, opacity:disabled?0.6:1, transition:"opacity .2s" }}
-      onMouseEnter={e => !disabled && (e.currentTarget.style.opacity = ".8")}
-      onMouseLeave={e => !disabled && (e.currentTarget.style.opacity = "1")}
-    >{children}</button>
-  );
-
   return (
     <div style={{ display:"flex", flexDirection:"column", height:"100%", minHeight:0 }}>
 
       {/* ── Sub-topbar ── */}
-      <div style={{ flexShrink:0, position:"sticky", top:0, zIndex:10, background:T("rgba(240,232,216,0.95)","rgba(20,21,22,0.95)"), borderBottom:`1px solid ${T("rgba(26,18,8,0.08)","rgba(255,255,255,0.07)")}`, padding:"8px 20px", display:"flex", alignItems:"center", gap:"12px", backdropFilter:"blur(12px)" }}>
+      <div style={{ flexShrink:0, position:"sticky", top:0, zIndex:10, background:T("rgba(240,232,216,0.95)","rgba(20,21,22,0.95)"), borderBottom:`1px solid ${T("rgba(26,18,8,0.08)","rgba(255,255,255,0.07)")}`, padding:"8px 12px", display:"flex", alignItems:"center", gap:"8px", backdropFilter:"blur(12px)", flexWrap:"wrap" }}>
 
         {/* cv: label */}
-        <div style={{ display:"flex", alignItems:"center", gap:"4px", fontFamily:"monospace", fontSize:"11px", background:T("rgba(0,0,0,0.06)","rgba(255,255,255,0.04)"), padding:"4px 10px", borderRadius:"7px", border:`1px solid ${T("rgba(26,18,8,0.08)","rgba(255,255,255,0.06)")}` }}>
+        <div style={{ display:"flex", alignItems:"center", gap:"4px", fontFamily:"monospace", fontSize:"11px", background:T("rgba(0,0,0,0.06)","rgba(255,255,255,0.04)"), padding:"4px 10px", borderRadius:"7px", border:`1px solid ${T("rgba(26,18,8,0.08)","rgba(255,255,255,0.06)")}`, flexShrink:0 }}>
           <span style={{ color:"#34d399" }}>cv</span>
           <span style={{ color:text2 }}>:</span>
           <span style={{ color:"#a855f7" }}>{step}</span>
@@ -432,7 +428,7 @@ function CVGeneratorPage() {
         <div style={{ flex:1 }}/>
 
         {/* Theme dots */}
-        <div style={{ display:"flex", alignItems:"center", gap:"6px" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:"5px", flexShrink:0 }}>
           <span style={{ fontSize:"9px", color:text2, fontFamily:"monospace", letterSpacing:".1em" }}>THEME</span>
           {Object.entries(CV_THEMES).map(([key, th]) => (
             <button
@@ -444,12 +440,12 @@ function CVGeneratorPage() {
           ))}
         </div>
 
-        <div style={{ width:"1px", height:"16px", background:T("rgba(26,18,8,0.12)","rgba(255,255,255,0.1)") }}/>
+        <div style={{ width:"1px", height:"16px", background:T("rgba(26,18,8,0.12)","rgba(255,255,255,0.1)"), flexShrink:0 }}/>
 
         {/* Preview / Edit */}
         <button
           onClick={() => setStep(s => s === "form" ? "preview" : "form")}
-          style={{ display:"inline-flex", alignItems:"center", gap:"5px", padding:"5px 12px", borderRadius:"7px", border:"none", cursor:"pointer", background:step==="preview"?"linear-gradient(135deg,#5ba898,#4a9080)":T("rgba(26,18,8,0.08)","rgba(255,255,255,0.07)"), color:step==="preview"?"#fff":text, fontSize:"11px", fontFamily:"monospace", fontWeight:600, transition:"background .2s" }}
+          style={{ display:"inline-flex", alignItems:"center", gap:"5px", padding:"5px 10px", borderRadius:"7px", border:"none", cursor:"pointer", background:step==="preview"?"linear-gradient(135deg,#5ba898,#4a9080)":T("rgba(26,18,8,0.08)","rgba(255,255,255,0.07)"), color:step==="preview"?"#fff":text, fontSize:"11px", fontFamily:"monospace", fontWeight:600, transition:"background .2s", flexShrink:0 }}
         >
           {step === "form" ? <><FaEye size={11}/> Preview</> : <><FaPen size={10}/> Edit</>}
         </button>
@@ -458,9 +454,9 @@ function CVGeneratorPage() {
           <button
             onClick={handleDownload}
             disabled={downloading}
-            style={{ display:"inline-flex", alignItems:"center", gap:"5px", padding:"5px 12px", borderRadius:"7px", border:"none", cursor:downloading?"wait":"pointer", background:"linear-gradient(135deg,#5ba898,#4a9080)", color:"#fff", fontSize:"11px", fontFamily:"monospace", fontWeight:600, opacity:downloading?0.7:1 }}
+            style={{ display:"inline-flex", alignItems:"center", gap:"5px", padding:"5px 10px", borderRadius:"7px", border:"none", cursor:downloading?"wait":"pointer", background:"linear-gradient(135deg,#5ba898,#4a9080)", color:"#fff", fontSize:"11px", fontFamily:"monospace", fontWeight:600, opacity:downloading?0.7:1, flexShrink:0 }}
           >
-            <FaDownload size={11}/>{downloading ? "Generating…" : "Download PNG"}
+            <FaDownload size={11}/>{downloading ? "…" : "Download PNG"}
           </button>
         )}
       </div>
@@ -473,15 +469,15 @@ function CVGeneratorPage() {
       )}
 
       {/* ── Body ── */}
-      <div style={{ flex:1, overflow:"auto", padding:"22px 20px" }}>
+      <div style={{ flex:1, overflow:"auto", padding:"18px 12px" }}>
         {step === "form" ? (
 
           /* ══ FORM ══ */
-          <div style={{ maxWidth:"980px", margin:"0 auto", display:"grid", gridTemplateColumns:"320px 1fr", gap:"18px" }}>
+          <div style={{ maxWidth:"980px", margin:"0 auto", display:"grid", gridTemplateColumns:"minmax(0,320px) minmax(0,1fr)", gap:"14px" }} className="cv-form-grid">
 
             {/* Left column */}
             <div>
-              <RCard title="// personal_info">
+              <RCard title="// personal_info" cardBg={cardBg}>
                 {/* Photo */}
                 <div style={{ ...fg, textAlign:"center" }}>
                   <div
@@ -536,19 +532,19 @@ function CVGeneratorPage() {
                 ))}
               </RCard>
 
-              <RCard title="// skills">
+              <RCard title="// skills" cardBg={cardBg}>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6px", marginBottom:"8px" }}>
-                  {data.skills.map((s, i) => (
-                    <input key={i} style={inp} value={s} onChange={e => setArr("skills", i, e.target.value)} placeholder={`Skill ${i+1}`} onFocus={onFocus} onBlur={onBlur}/>
+                  {data.skills.map((sk, i) => (
+                    <input key={i} style={inp} value={sk} onChange={e => setArr("skills", i, e.target.value)} placeholder={`Skill ${i+1}`} onFocus={onFocus} onBlur={onBlur}/>
                   ))}
                 </div>
                 <CvBtn small onClick={() => addItem("skills", "")}><FaPlus size={9}/> add skill</CvBtn>
               </RCard>
 
-              <RCard title="// tools_&_platforms">
+              <RCard title="// tools_&_platforms" cardBg={cardBg}>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"6px", marginBottom:"8px" }}>
-                  {data.tools.map((s, i) => (
-                    <input key={i} style={inp} value={s} onChange={e => setArr("tools", i, e.target.value)} placeholder={`Tool ${i+1}`} onFocus={onFocus} onBlur={onBlur}/>
+                  {data.tools.map((tk, i) => (
+                    <input key={i} style={inp} value={tk} onChange={e => setArr("tools", i, e.target.value)} placeholder={`Tool ${i+1}`} onFocus={onFocus} onBlur={onBlur}/>
                   ))}
                 </div>
                 <CvBtn small onClick={() => addItem("tools", "")}><FaPlus size={9}/> add tool</CvBtn>
@@ -557,7 +553,7 @@ function CVGeneratorPage() {
 
             {/* Right column */}
             <div>
-              <RCard title="// profile_summary">
+              <RCard title="// profile_summary" cardBg={cardBg}>
                 <textarea
                   style={{ ...inp, height:"72px", resize:"vertical" }}
                   value={data.profile}
@@ -568,7 +564,7 @@ function CVGeneratorPage() {
                 />
               </RCard>
 
-              <RCard title="// education">
+              <RCard title="// education" cardBg={cardBg}>
                 {data.education.map((e, i) => (
                   <div key={i} style={{ borderLeft:"2px solid rgba(91,168,152,0.3)", paddingLeft:"12px", marginBottom:"12px" }}>
                     <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"6px" }}>
@@ -590,7 +586,7 @@ function CVGeneratorPage() {
                 <CvBtn small onClick={() => addItem("education", { degree:"", school:"", year:"", desc:"" })}><FaPlus size={9}/> add entry</CvBtn>
               </RCard>
 
-              <RCard title="// projects">
+              <RCard title="// projects" cardBg={cardBg}>
                 {data.projects.map((p, i) => (
                   <div key={i} style={{ borderLeft:`2px solid ${p.coming ? "rgba(212,147,90,0.4)" : "rgba(91,168,152,0.3)"}`, paddingLeft:"12px", marginBottom:"12px" }}>
                     <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"6px", alignItems:"center" }}>
@@ -612,7 +608,6 @@ function CVGeneratorPage() {
                         )}
                       </div>
                     </div>
-                    {/* Coming soon hint */}
                     {p.coming && (
                       <div style={{ fontSize:"10px", color:"#d4935a", fontFamily:"monospace", marginBottom:"8px", padding:"4px 8px", background:"rgba(212,147,90,0.08)", borderRadius:"5px", border:"1px solid rgba(212,147,90,0.2)" }}>
                         This project will display as "coming soon" in the CV
@@ -629,9 +624,9 @@ function CVGeneratorPage() {
                 <CvBtn small onClick={() => addItem("projects", { title:"", stack:"", desc:"", coming:false })}><FaPlus size={9}/> add project</CvBtn>
               </RCard>
 
-              <RCard title="// experience">
+              <RCard title="// experience" cardBg={cardBg}>
                 <div style={{ fontSize:"10px", color:text2, fontFamily:"monospace", marginBottom:"12px", padding:"6px 10px", background:T("rgba(26,18,8,0.05)","rgba(255,255,255,0.04)"), borderRadius:"6px", border:`1px solid ${T("rgba(26,18,8,0.08)","rgba(255,255,255,0.06)")}` }}>
-                  Leave empty → shows "seeking role" fallback box &nbsp;·&nbsp; Add entries → shows same timeline as Education
+                  Leave empty → shows "seeking role" fallback box · Add entries → shows timeline
                 </div>
                 {data.experience.map((e, i) => (
                   <div key={i} style={{ borderLeft:"2px solid rgba(91,168,152,0.3)", paddingLeft:"12px", marginBottom:"12px" }}>
@@ -652,7 +647,6 @@ function CVGeneratorPage() {
                   </div>
                 ))}
 
-                {/* Fallback text fields */}
                 <div style={{ borderTop:`1px solid ${T("rgba(26,18,8,0.07)","rgba(255,255,255,0.07)")}`, paddingTop:"12px", marginTop:"4px" }}>
                   <div style={{ fontSize:"10px", color:"#5ba898", fontFamily:"monospace", marginBottom:"8px", letterSpacing:".08em" }}>FALLBACK (shown when no experience added)</div>
                   <div style={{ marginBottom:"8px" }}>
@@ -679,7 +673,7 @@ function CVGeneratorPage() {
               <span style={{ color:text2 }}>·</span>
               <span>switch themes from the dots above</span>
             </div>
-            <div style={{ transform:"scale(0.82)", transformOrigin:"top center", boxShadow:"0 8px 60px rgba(0,0,0,.55),0 0 0 1px rgba(91,168,152,0.15)" }}>
+            <div style={{ transform:"scale(0.82)", transformOrigin:"top center", boxShadow:"0 8px 60px rgba(0,0,0,.55),0 0 0 1px rgba(91,168,152,0.15)" }} className="cv-preview-scale">
               <CVPreview data={data} cvTheme={cvTheme} photoSrc={photoSrc}/>
             </div>
             <div style={{ height:"32px" }}/>
@@ -732,15 +726,22 @@ export default function UserDemandPage() {
   }, [navigate]);
 
   /* ── responsive sidebar ── */
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   useEffect(() => {
-    const onResize = () => setSidebarOpen(window.innerWidth > 768);
+    const onResize = () => {
+      const w = window.innerWidth;
+      setWindowWidth(w);
+      setSidebarOpen(w > 768);
+    };
     onResize();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  const isMobile  = windowWidth <= 768;
   const ICON_W    = 56;
   const SIDEBAR_W = sidebarOpen ? 220 : 0;
+  const totalSidebarW = ICON_W + SIDEBAR_W;
 
   return (
     <div
@@ -752,12 +753,21 @@ export default function UserDemandPage() {
       <DevModeToggle/>
 
       {/* Mobile overlay */}
-      {sidebarOpen && window.innerWidth <= 768 && (
+      {sidebarOpen && isMobile && (
         <div onClick={() => setSidebarOpen(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", zIndex:99 }}/>
       )}
 
       {/* ── Sidebar ── */}
-      <div style={{ position:"fixed", top:0, left:0, bottom:0, zIndex:100, display:"flex", flexDirection:"column", width:`${ICON_W+SIDEBAR_W}px`, transform:window.innerWidth<=768&&!sidebarOpen?`translateX(-${ICON_W}px)`:"translateX(0)", transition:"width 0.3s cubic-bezier(.4,0,.2,1), transform 0.3s cubic-bezier(.4,0,.2,1)", background:t("rgba(255,253,247,0.94)","rgba(22,23,24,0.96)"), borderRight:`1px solid ${t("rgba(26,18,8,0.08)","rgba(255,255,255,0.07)")}`, backdropFilter:"blur(18px)", overflow:"hidden" }}>
+      <div style={{
+        position:"fixed", top:0, left:0, bottom:0, zIndex:100,
+        display:"flex", flexDirection:"column",
+        width:`${totalSidebarW}px`,
+        transform: isMobile && !sidebarOpen ? `translateX(-${totalSidebarW}px)` : "translateX(0)",
+        transition:"width 0.3s cubic-bezier(.4,0,.2,1), transform 0.3s cubic-bezier(.4,0,.2,1)",
+        background:t("rgba(255,253,247,0.94)","rgba(22,23,24,0.96)"),
+        borderRight:`1px solid ${t("rgba(26,18,8,0.08)","rgba(255,255,255,0.07)")}`,
+        backdropFilter:"blur(18px)", overflow:"hidden",
+      }}>
 
         {/* Logo row */}
         <div style={{ display:"flex", alignItems:"center", padding:"18px 12px 12px", gap:"10px", flexShrink:0, minHeight:"72px" }}>
@@ -784,7 +794,7 @@ export default function UserDemandPage() {
             return (
               <button
                 key={id}
-                onClick={() => { setActive(id); if (window.innerWidth <= 768) setSidebarOpen(false); }}
+                onClick={() => { setActive(id); if (isMobile) setSidebarOpen(false); }}
                 title={!sidebarOpen ? label : undefined}
                 style={{ width:"100%", display:"flex", alignItems:"center", gap:"12px", padding:"10px 10px", borderRadius:"10px", border:"none", cursor:"pointer", marginBottom:"3px", textAlign:"left", whiteSpace:"nowrap", overflow:"hidden", background:isActive?"rgba(91,168,152,0.15)":"transparent", color:isActive?"#5ba898":t("rgba(26,18,8,0.5)","rgba(228,230,235,0.5)"), fontFamily:"monospace", fontSize:"12px", letterSpacing:".02em", borderLeft:isActive?"2px solid #5ba898":"2px solid transparent", transition:"all .2s" }}
                 onMouseEnter={e => { if (!isActive) { e.currentTarget.style.background = t("rgba(26,18,8,0.04)","rgba(255,255,255,0.05)"); e.currentTarget.style.color = t("#1a1208","#e4e6eb"); }}}
@@ -821,21 +831,28 @@ export default function UserDemandPage() {
       </div>
 
       {/* ── Main content ── */}
-      <div style={{ flex:1, marginLeft:window.innerWidth<=768?(sidebarOpen?`${ICON_W+SIDEBAR_W}px`:"0"):`${ICON_W+SIDEBAR_W}px`, transition:"margin-left 0.3s cubic-bezier(.4,0,.2,1)", minHeight:"100vh", position:"relative", zIndex:1, display:"flex", flexDirection:"column" }}>
+      <div style={{
+        flex:1,
+        marginLeft: isMobile ? "0" : `${totalSidebarW}px`,
+        transition:"margin-left 0.3s cubic-bezier(.4,0,.2,1)",
+        minHeight:"100vh", position:"relative", zIndex:1,
+        display:"flex", flexDirection:"column",
+      }}>
 
         {/* Top bar */}
-        <div style={{ position:"sticky", top:0, zIndex:50, height:"54px", display:"flex", alignItems:"center", padding:"0 32px", gap:"12px", background:t("rgba(240,232,216,0.88)","rgba(20,21,22,0.9)"), borderBottom:`1px solid ${t("rgba(26,18,8,0.07)","rgba(255,255,255,0.06)")}`, backdropFilter:"blur(14px)", transition:"background 0.6s", flexShrink:0 }}>
-          {window.innerWidth <= 768 && !sidebarOpen && (
-            <button onClick={() => setSidebarOpen(true)} style={{ background:"transparent", border:"none", cursor:"pointer", color:"#5ba898", display:"flex", alignItems:"center", padding:"8px", marginRight:"8px" }}>
+        <div style={{ position:"sticky", top:0, zIndex:50, height:"54px", display:"flex", alignItems:"center", padding:"0 16px", gap:"12px", background:t("rgba(240,232,216,0.88)","rgba(20,21,22,0.9)"), borderBottom:`1px solid ${t("rgba(26,18,8,0.07)","rgba(255,255,255,0.06)")}`, backdropFilter:"blur(14px)", transition:"background 0.6s", flexShrink:0 }}>
+          {/* Always show hamburger on mobile */}
+          {isMobile && (
+            <button onClick={() => setSidebarOpen(true)} style={{ background:"transparent", border:"none", cursor:"pointer", color:"#5ba898", display:"flex", alignItems:"center", padding:"6px", marginRight:"4px" }}>
               <FaBars size={18}/>
             </button>
           )}
-          <div style={{ flex:1 }}>
+          <div style={{ flex:1, overflow:"hidden", whiteSpace:"nowrap", textOverflow:"ellipsis" }}>
             <span style={{ fontSize:"12px", fontFamily:"monospace", color:"#5ba898" }}>aayush</span>
             <span style={{ color:t("rgba(26,18,8,0.3)","rgba(255,255,255,0.25)"), fontFamily:"monospace", fontSize:"12px" }}>@portfolio:/user-demand/</span>
             <span style={{ color:"#a855f7", fontFamily:"monospace", fontSize:"12px" }}>{active}</span>
           </div>
-          <span style={{ fontSize:"10px", fontFamily:"monospace", color:t("rgba(26,18,8,0.3)","rgba(228,230,235,0.3)") }}>
+          <span style={{ fontSize:"10px", fontFamily:"monospace", color:t("rgba(26,18,8,0.3)","rgba(228,230,235,0.3)"), flexShrink:0 }}>
             {new Date().toLocaleDateString("en-US", { weekday:"short", month:"short", day:"numeric" })}
           </span>
         </div>
@@ -852,6 +869,27 @@ export default function UserDemandPage() {
         @keyframes spin { to{transform:rotate(360deg)} }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes barPulse { 0%,100%{opacity:.3} 50%{opacity:.85} }
+
+        /* Responsive form grid */
+        @media (max-width: 700px) {
+          .cv-form-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        /* Responsive CV preview scale */
+        @media (max-width: 900px) {
+          .cv-preview-scale {
+            transform: scale(0.6) !important;
+            transform-origin: top center !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .cv-preview-scale {
+            transform: scale(0.4) !important;
+            transform-origin: top center !important;
+          }
+        }
       `}</style>
     </div>
   );

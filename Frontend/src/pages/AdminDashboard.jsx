@@ -16,7 +16,7 @@ import {
   apiGetProjects, apiAddProject, apiUpdateProject, apiDeleteProject,
   apiGetEducation, apiAddEducation, apiUpdateEducation, apiDeleteEducation,
   apiGetExperience, apiAddExperience, apiUpdateExperience, apiDeleteExperience,
-  apiGetMessages, apiMarkRead, apiDeleteMessage,
+  apiGetMessages, apiMarkRead, apiDeleteMessage,apiUploadCV, apiDeleteCV
 } from "../api";
 
 /* ─────────────────────── Constants ────────────────────────────── */

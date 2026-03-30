@@ -38,6 +38,13 @@ export const apiUploadLogo = (file) => {
   fd.append("logo", file);
   return req("POST", "/upload/logo", fd, true);
 };
+/* ── CV / Resume ── */
+export const apiUploadCV = (file) => {
+  const fd = new FormData();
+  fd.append("cv", file);
+  return req("POST", "/upload/cv", fd, true);
+};
+export const apiDeleteCV = () => req("DELETE", "/upload/cv");
 
 /* ── Skills ── */
 export const apiGetSkills    = ()          => req("GET",    "/skills");

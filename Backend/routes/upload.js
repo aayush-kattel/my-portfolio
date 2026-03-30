@@ -64,6 +64,7 @@ const cvStorage = new CloudinaryStorage({
     resource_type: "raw",           // required for non-image files like PDF
     public_id:     "resume",        // always overwrite with same public_id
     format:        "pdf",
+    type:          "upload",  
   }),
 });
 

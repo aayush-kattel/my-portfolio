@@ -83,11 +83,8 @@ router.post("/cv", auth, uploadCV.single("cv"), async (req, res) => {
   try {
     let p = await Profile.findOne();
 
-    // Append fl_attachment so browsers always download instead of previewing
-    const rawUrl = req.file.path;
-    const cvUrl  = rawUrl.includes("?")
-      ? rawUrl + "&fl_attachment=Resume.pdf"
-      : rawUrl + "?fl_attachment=Resume.pdf";
+    // Use the raw URL directly — no fl_attachment
+    const cvUrl = req.file.path;
 
     if (!p) p = await Profile.create({ cvUrl });
     else    { p.cvUrl = cvUrl; await p.save(); }

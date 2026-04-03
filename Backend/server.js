@@ -15,8 +15,18 @@ const uploadRoutes  = require("./routes/upload");
 const app = express();
 
 /* ── CORS ── */
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map(o => o.trim());
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked: ${origin}`));
+    }
+  },
   credentials: true,
 }));
 
@@ -31,7 +41,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 let isConnected = false;
 
 async function connectDB() {
-  if (isConnected) return; // Reuse existing connection
+  if (isConnected) return;
 
   if (mongoose.connection.readyState >= 1) {
     isConnected = true;

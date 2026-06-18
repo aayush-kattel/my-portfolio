@@ -31,9 +31,9 @@ function StatusLine({ text, color, onDone }) {
       if (i >= text.length) {
         clearInterval(iv);
         setDone(true);
-        setTimeout(() => onDone && onDone(), 180);
+        setTimeout(() => onDone && onDone(), 60); // was 180
       }
-    }, 18);
+    }, 8); // was 18
     return () => clearInterval(iv);
   }, []);
 
@@ -85,11 +85,11 @@ export default function LoadingIntro({ onDone }) {
         setCmdDisplayed(CMD.slice(0, i));
         if (i >= CMD.length) {
           clearInterval(iv);
-          setTimeout(() => setCmdDone(true), 380);
+          setTimeout(() => setCmdDone(true), 100); // was 380
         }
-      }, 95);
+      }, 30); // was 95
       return () => clearInterval(iv);
-    }, 700);
+    }, 200); // was 700
     return () => clearTimeout(delay);
   }, []);
 
@@ -98,7 +98,7 @@ export default function LoadingIntro({ onDone }) {
     const t = setTimeout(() => {
       setActiveStages([0]);
       setProgress(PROGRESS_AT[0]);
-    }, 260);
+    }, 80); // was 260
     return () => clearTimeout(t);
   }, [cmdDone]);
 
@@ -115,8 +115,8 @@ export default function LoadingIntro({ onDone }) {
 
   useEffect(() => {
     if (!finishing) return;
-    const t1 = setTimeout(() => setFadeOut(true), 700);
-    const t2 = setTimeout(() => onDone && onDone(), 1400);
+    const t1 = setTimeout(() => setFadeOut(true), 350);  // was 700
+    const t2 = setTimeout(() => onDone && onDone(), 900); // was 1400
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [finishing]);
 
